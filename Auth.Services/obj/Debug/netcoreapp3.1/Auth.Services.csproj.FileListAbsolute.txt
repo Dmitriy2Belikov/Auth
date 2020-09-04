@@ -22,3 +22,15 @@ C:\Users\user\Desktop\Auth\Ayth.Services\obj\Debug\netcoreapp3.1\Auth.Services.c
 C:\Users\user\Desktop\Auth\Ayth.Services\obj\Debug\netcoreapp3.1\Auth.Services.dll
 C:\Users\user\Desktop\Auth\Ayth.Services\obj\Debug\netcoreapp3.1\Auth.Services.pdb
 C:\Users\user\Desktop\Auth\Ayth.Services\obj\Debug\netcoreapp3.1\Auth.Services.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\Auth\Auth.Services\bin\Debug\netcoreapp3.1\Auth.Services.deps.json
+C:\Users\user\Desktop\Auth\Auth.Services\bin\Debug\netcoreapp3.1\Auth.Services.dll
+C:\Users\user\Desktop\Auth\Auth.Services\bin\Debug\netcoreapp3.1\Auth.Services.pdb
+C:\Users\user\Desktop\Auth\Auth.Services\bin\Debug\netcoreapp3.1\Auth.DataLayer.dll
+C:\Users\user\Desktop\Auth\Auth.Services\bin\Debug\netcoreapp3.1\Auth.DataLayer.pdb
+C:\Users\user\Desktop\Auth\Auth.Services\obj\Debug\netcoreapp3.1\Auth.Services.csprojAssemblyReference.cache
+C:\Users\user\Desktop\Auth\Auth.Services\obj\Debug\netcoreapp3.1\Auth.Services.AssemblyInfoInputs.cache
+C:\Users\user\Desktop\Auth\Auth.Services\obj\Debug\netcoreapp3.1\Auth.Services.AssemblyInfo.cs
+C:\Users\user\Desktop\Auth\Auth.Services\obj\Debug\netcoreapp3.1\Auth.Services.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\Auth\Auth.Services\obj\Debug\netcoreapp3.1\Auth.Services.csproj.CopyComplete
+C:\Users\user\Desktop\Auth\Auth.Services\obj\Debug\netcoreapp3.1\Auth.Services.dll
+C:\Users\user\Desktop\Auth\Auth.Services\obj\Debug\netcoreapp3.1\Auth.Services.pdb

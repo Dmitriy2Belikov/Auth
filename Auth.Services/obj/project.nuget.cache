@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "+nB5lhBUZ/Q2AODiag4HeiIZvIuzx8gCO0pDworAL8ruV4YeJSW0tt4Y+TljgPLb1BDEvO39orU6bCY0zkvM4A==",
+  "dgSpecHash": "ZeEJ7Hq5shfMkzCySlJR7hbeMFnNQi6g4zHr0SdOzybWP3PR6JP+OwT/gVbb8iJ1PWUEGhUAwh6VnfirB7jshA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\Desktop\\Auth\\Ayth.Services\\Auth.Services.csproj",
+  "projectFilePath": "C:\\Users\\user\\Desktop\\Auth\\Auth.Services\\Auth.Services.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\user\\.nuget\\packages\\bcrypt.net-next\\4.0.0\\bcrypt.net-next.4.0.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",

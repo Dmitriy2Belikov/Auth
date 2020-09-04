@@ -1177,11 +1177,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\Desktop\\Auth\\Ayth.Services\\Auth.Services.csproj",
+      "projectUniqueName": "C:\\Users\\user\\Desktop\\Auth\\Auth.Services\\Auth.Services.csproj",
       "projectName": "Auth.Services",
-      "projectPath": "C:\\Users\\user\\Desktop\\Auth\\Ayth.Services\\Auth.Services.csproj",
+      "projectPath": "C:\\Users\\user\\Desktop\\Auth\\Auth.Services\\Auth.Services.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\Desktop\\Auth\\Ayth.Services\\obj\\",
+      "outputPath": "C:\\Users\\user\\Desktop\\Auth\\Auth.Services\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",

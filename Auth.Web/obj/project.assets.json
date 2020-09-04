@@ -7126,8 +7126,8 @@
     },
     "Auth.Services/1.0.0": {
       "type": "project",
-      "path": "../Ayth.Services/Auth.Services.csproj",
-      "msbuildProject": "../Ayth.Services/Auth.Services.csproj"
+      "path": "../Auth.Services/Auth.Services.csproj",
+      "msbuildProject": "../Auth.Services/Auth.Services.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -7145,11 +7145,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\Desktop\\Auth\\Auth\\Auth.Web.csproj",
+      "projectUniqueName": "C:\\Users\\user\\Desktop\\Auth\\Auth.Web\\Auth.Web.csproj",
       "projectName": "Auth.Web",
-      "projectPath": "C:\\Users\\user\\Desktop\\Auth\\Auth\\Auth.Web.csproj",
+      "projectPath": "C:\\Users\\user\\Desktop\\Auth\\Auth.Web\\Auth.Web.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\Desktop\\Auth\\Auth\\obj\\",
+      "outputPath": "C:\\Users\\user\\Desktop\\Auth\\Auth.Web\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -7165,8 +7165,8 @@
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "C:\\Users\\user\\Desktop\\Auth\\Ayth.Services\\Auth.Services.csproj": {
-              "projectPath": "C:\\Users\\user\\Desktop\\Auth\\Ayth.Services\\Auth.Services.csproj"
+            "C:\\Users\\user\\Desktop\\Auth\\Auth.Services\\Auth.Services.csproj": {
+              "projectPath": "C:\\Users\\user\\Desktop\\Auth\\Auth.Services\\Auth.Services.csproj"
             }
           }
         }
