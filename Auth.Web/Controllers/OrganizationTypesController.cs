@@ -1,6 +1,7 @@
 ﻿using Auth.Services.PrimitivesServices.OrganizationTypeServices;
 using Auth.Web.Builders.OrganizationTypes;
 using Auth.Web.Forms.OrganizationType;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -22,6 +23,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize]
         public IActionResult Create(RegisterOrganizationTypeForm registerOrganizationTypeForm)
         {
             if (ModelState.IsValid)
@@ -39,6 +41,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult Get(Guid id)
         {
             if (_organizationTypeService.Contains(id))
@@ -53,7 +56,8 @@ namespace Auth.Web.Controllers
             }
         }
 
-        [HttpGet("")]
+        [HttpGet]
+        [Authorize]
         public IActionResult List()
         {
             var organizationTypes = _organizationTypeService.GetAll();
@@ -62,6 +66,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult Edit(Guid id, EditOrganizationTypeForm editOrganizationTypeForm)
         {
             if (_organizationTypeService.Contains(id))
@@ -86,6 +91,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Remove(Guid id)
         {
             _organizationTypeService.Remove(id);

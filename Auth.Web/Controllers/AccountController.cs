@@ -52,9 +52,11 @@ namespace Auth.Web.Controllers
         }
 
         [HttpGet("refresh_token")]
-        public IActionResult GetNewTokens(Guid id, string ip, string userAgent, string token)
+        public IActionResult GetNewTokens(Guid id, string ip, string userAgent)
         {
             var user = _userService.Get(id);
+
+            var token = _cookieService.Extract(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE);
 
             var isVerified = _tokenService.VerifyRefreshToken(user, token);
 
@@ -65,7 +67,8 @@ namespace Auth.Web.Controllers
                 var accessToken = _tokenService.BuildNewAccessToken(identity);               
                 var refreshToken = _tokenService.BuildNewRefreshToken();
 
-                HttpContext.Response.Cookies.Append("refresh_token", refreshToken);
+                _cookieService.RemoveCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE);
+                _cookieService.SetCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE, refreshToken);
 
                 var oldRefreshSession = _tokenService.GetRefreshSession(token);
                 _tokenService.RemoveOldRefreshSession(oldRefreshSession.Id);
@@ -93,33 +96,36 @@ namespace Auth.Web.Controllers
             {
                 var user = _userService.Get(loginViewModel.Login);
 
-                var identity = _accountService.GetIdentity(user);
-
-                if (identity != null)
+                if (_accountService.Verify(user, loginViewModel.Password))
                 {
-                    var browserData = new BrowserData()
+                    var identity = _accountService.GetIdentity(user);
+
+                    if (identity != null)
                     {
-                        IP = loginViewModel.IP, 
-                        UserAgent = loginViewModel.UserAgent
-                    };
+                        var browserData = new BrowserData()
+                        {
+                            IP = "f",
+                            UserAgent = loginViewModel.UserAgent
+                        };
 
-                    var tokens = _accountService.Login(loginViewModel.Login, loginViewModel.Password, browserData);
+                        var tokens = _accountService.Login(loginViewModel.Login, loginViewModel.Password, browserData);
 
-                    _cookieService.RemoveCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE);
-                    _cookieService.SetCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE, tokens.RefreshToken);
+                        _cookieService.RemoveCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE);
+                        _cookieService.SetCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE, tokens.RefreshToken);
 
-                    var identityRoles = identity.Claims
-                        .Where(c => c.Type == ClaimTypes.Role)
-                        .Select(c => c.Value);
+                        var identityRoles = identity.Claims
+                            .Where(c => c.Type == ClaimTypes.Role)
+                            .Select(c => c.Value);
 
-                    var response = new
-                    {
-                        access_token = tokens.AccessToken,
-                        username = identity.Name,
-                        roles = identityRoles
-                    };
+                        var response = new
+                        {
+                            access_token = tokens.AccessToken,
+                            username = identity.Name,
+                            roles = identityRoles
+                        };
 
-                    return Ok(response);
+                        return Ok(response);
+                    }
                 }
 
                 return BadRequest("Неправильный логин или пароль");
@@ -131,6 +137,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpGet("logout")]
+        [Authorize]
         public IActionResult Logout(string token)
         {
             var refreshSession = _tokenService.GetRefreshSession(token);
@@ -169,6 +176,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpGet("{id}", Name = "UserResource")]
+        [Authorize]
         public IActionResult GetProfile(Guid id)
         {
             var user = _userService.Get(id);
@@ -199,29 +207,29 @@ namespace Auth.Web.Controllers
             }
         }
 
-        //[HttpGet("verify/{id}")]
-        //public IActionResult VerifyUser(Guid id, string password)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = _userService.Get(id);
+        [HttpGet("verify/{id}")]
+        public IActionResult VerifyUser(Guid id, string password)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = _userService.Get(id);
 
-        //        var isVerified = _accountService.Verify(user.Login, password);
+                var isVerified = _accountService.Verify(user, password);
 
-        //        if (isVerified)
-        //        {
-        //            return Ok(user);
-        //        }
-        //        else
-        //        {
-        //            return Conflict("Неправильный пароль");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
+                if (isVerified)
+                {
+                    return Ok(user);
+                }
+                else
+                {
+                    return Conflict("Неправильный пароль");
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
 
         [HttpDelete("{id}")]
         [Authorize]

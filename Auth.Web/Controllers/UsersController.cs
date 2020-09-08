@@ -4,6 +4,7 @@ using Auth.Services.PrimitivesServices.UserServices;
 using Auth.Web.Forms.Account;
 using Auth.Web.Models.Builders.Persons;
 using Auth.Web.Models.Builders.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -34,6 +35,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize]
         public IActionResult Create(RegisterUserForm registerUserForm)
         {
             if (ModelState.IsValid)
@@ -51,6 +53,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult Get(Guid id)
         {
             var user = _userService.Get(id);
@@ -59,6 +62,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult List()
         {
             var users = _userService.GetAll();

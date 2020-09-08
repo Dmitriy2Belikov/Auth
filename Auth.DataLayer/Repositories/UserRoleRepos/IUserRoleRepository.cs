@@ -8,5 +8,6 @@ namespace Auth.DataLayer.Repositories.UserRoleRepos
     public interface IUserRoleRepository : IModelRepository<UserRoleLink>
     {
         IEnumerable<UserRoleLink> GetAllByRoleId(Guid roleId);
+        IEnumerable<UserRoleLink> GetAllByUserId(Guid userId);
     }
 }

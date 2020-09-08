@@ -3,6 +3,7 @@ using Auth.Web.Builders.OrganizationRequisites;
 using Auth.Web.Builders.Organizations;
 using Auth.Web.Builders.Roles;
 using Auth.Web.Forms.Organization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -27,6 +28,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize]
         public IActionResult Create(RegisterOrganizationForm registerOrganizationForm)
         {
             if (ModelState.IsValid)
@@ -48,6 +50,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpGet("{id}", Name = "OrganizationResource")]
+        [Authorize]
         public IActionResult Get(Guid id)
         {
             if (_organizationService.Contains(id))
@@ -62,7 +65,8 @@ namespace Auth.Web.Controllers
             }
         }
 
-        [HttpGet("")]
+        [HttpGet]
+        [Authorize]
         public IActionResult List()
         {
             var organizations = _organizationService.GetAll();
@@ -71,6 +75,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult Edit(Guid id, EditOrganizationForm editOrganizationForm)
         {
             if (_organizationService.Contains(id))
@@ -95,6 +100,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Remove(Guid id)
         {
             if (_organizationService.Contains(id))

@@ -34,6 +34,34 @@ namespace Auth.Services.AccountServices
             _personRepository = personRepository;
         }
 
+        public (string AccessToken, string RefreshToken) GetNewTokenPair(string login, string refresh)
+        {
+            var user = _userService.Get(login);
+
+            if (_tokenService.VerifyRefreshToken(user, refresh))
+            {
+                var identity = GetIdentity(user);
+
+                var accessToken = _tokenService.BuildNewAccessToken(identity);
+
+                var refreshToken = _tokenService.BuildNewRefreshToken();
+
+                var oldRefreshSession = _refreshSessionRepository.GetByToken(refresh);
+
+                if (oldRefreshSession != null)
+                {
+                    _refreshSessionRepository.Remove(oldRefreshSession.Id);
+                }
+
+                var refreshSession = _tokenService.BuildNewRefreshSession(user.Id, oldRefreshSession.IP, oldRefreshSession.UserAgent, refreshToken);
+                _refreshSessionRepository.Add(refreshSession);
+
+                return (accessToken, refreshToken);
+            }
+
+            return (null, null);
+        }
+
         public (string AccessToken, string RefreshToken) Login(string login, string password, BrowserData browserData)
         {
             var user = _userService.Get(login);
@@ -100,14 +128,14 @@ namespace Auth.Services.AccountServices
             return null;
         }
 
-        //public bool Verify(User user, string password)
-        //{
-        //    if (user != null)
-        //    {
-        //        return Helpers.Verify(password, user.Password);
-        //    }
+        public bool Verify(User user, string password)
+        {
+            if (user != null)
+            {
+                return Helpers.Verify(password, user.Password);
+            }
 
-        //    return false;
-        //}
+            return false;
+        }
     }
 }

@@ -9,8 +9,6 @@ namespace Auth.Web.Forms.Account
     {
         public string Login { get; set; }
         public string Password { get; set; }
-
-        public string IP { get; set; }
         public string UserAgent { get; set; }
     }
 }

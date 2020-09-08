@@ -1,4 +1,5 @@
 ﻿using Auth.Services.AccountServices;
+using Auth.Services.AccountServices.AccessServices;
 using Auth.Services.AccountServices.TokenAuthenticateServices;
 using Auth.Services.CookieServices.CookieServices;
 using Auth.Services.PrimitivesServices.OrganizationServices;
@@ -24,6 +25,7 @@ namespace Auth.Services
 
             services.AddTransient<ICookieService, CookieService>();
             services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IAccessService, AccessService>();
 
             services.AddTransient<ISeedService, SeedService>();
 

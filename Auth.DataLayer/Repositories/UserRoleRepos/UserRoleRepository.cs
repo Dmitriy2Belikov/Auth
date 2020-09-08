@@ -21,5 +21,12 @@ namespace Auth.DataLayer.Repositories.UserRoleRepos
 
             return userRoleLinks;
         }
+
+        public IEnumerable<UserRoleLink> GetAllByUserId(Guid userId)
+        {
+            var userRoleLinks = _context.UserRoleLinks.Where(u => u.UserId == userId);
+
+            return userRoleLinks;
+        }
     }
 }

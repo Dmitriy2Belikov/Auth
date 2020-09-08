@@ -35,6 +35,8 @@ namespace Auth.Web
 
             services.AddBuilders();
 
+            services.AddCors();
+
             // Add Identity configuration
             services.Configure<IdentityOptions>(options =>
             {
@@ -95,6 +97,11 @@ namespace Auth.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors(options => options
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 
             app.UseEndpoints(endpoints =>
             {

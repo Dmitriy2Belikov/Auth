@@ -1,8 +1,11 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.Services.AccountServices.AccessServices;
+using Auth.Services.AccountServices.TokenAuthenticateServices;
 using Auth.Services.PrimitivesServices.RoleServices;
 using Auth.Web.Builders.Roles;
 using Auth.Web.Forms.Role;
 using Auth.Web.Models.Builders.Permissions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -16,15 +19,25 @@ namespace Auth.Web.Controllers
         private IRoleService _roleService;
         private IRoleBuilder _roleBuilder;
         private IPermissionBuilder _permissionBuilder;
+        private IAccessService _accessService;
+        private ITokenService _tokenService;
 
-        public RolesController(IRoleService roleService, IRoleBuilder roleBuilder, IPermissionBuilder permissionBuilder)
+        public RolesController(
+            IRoleService roleService,
+            IRoleBuilder roleBuilder,
+            IPermissionBuilder permissionBuilder,
+            IAccessService accessService,
+            ITokenService tokenService)
         {
             _roleService = roleService;
             _roleBuilder = roleBuilder;
             _permissionBuilder = permissionBuilder;
+            _accessService = accessService;
+            _tokenService = tokenService;
         }
 
         [HttpPost("create")]
+        [Authorize]
         public IActionResult Create(RegisterRoleForm registerRoleForm)
         {
             if (ModelState.IsValid)
@@ -46,6 +59,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public IActionResult Get(Guid id)
         {
             var roleViewModel = _roleBuilder.BuildViewModel(id);
@@ -54,9 +68,10 @@ namespace Auth.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult List()
         {
-            var roles = _roleService.GetAll();               
+            var roles = _roleService.GetAll();
 
             var roleViewModels = roles.Select(r => _roleBuilder.BuildViewModel(r));
 
@@ -64,6 +79,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult Edit(Guid id, EditRoleForm editRoleForm)
         {
             if (ModelState.IsValid)
@@ -85,6 +101,7 @@ namespace Auth.Web.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Remove(Guid id)
         {
             _roleService.Remove(id);
