@@ -1,4 +1,7 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.Roles;
+using Auth.DataLayer.Models.UserRoleLinks;
+using Auth.DataLayer.Models.Users;
 using Auth.DataLayer.Repositories.RoleRepos;
 using Auth.DataLayer.Repositories.UserRepos;
 using Auth.DataLayer.Repositories.UserRoleRepos;
@@ -14,27 +17,31 @@ namespace Auth.Services.PrimitivesServices.UserServices
         private IRoleRepository _roleRepository;
         private IUserRoleRepository _userRoleRepository;
 
-        public UserService(IUserRepository userRepository, IUserRoleRepository userRoleRepository, IRoleRepository roleRepository)
+        private IUserFactory _userFactory;
+        private IUserRoleLinkFactory _userRoleLinkFactory;
+
+        public UserService(IUserRepository userRepository, 
+            IUserRoleRepository userRoleRepository, 
+            IRoleRepository roleRepository, 
+            IUserFactory userFactory, 
+            IUserRoleLinkFactory userRoleLinkFactory)
         {
             _userRepository = userRepository;
             _userRoleRepository = userRoleRepository;
             _roleRepository = roleRepository;
+            _userFactory = userFactory;
+            _userRoleLinkFactory = userRoleLinkFactory;
         }
 
-        public void Add(User user, IEnumerable<Role> roles)
+        public User Add(Guid personId, string login, string password, IEnumerable<Role> roles)
         {
+            var user = _userFactory.Create(personId, login, password);
             _userRepository.Add(user);
 
-            foreach (var role in roles)
-            {
-                var userRole = new UserRoleLink()
-                {
-                    UserId = user.Id,
-                    RoleId = role.Id
-                };
+            var userRoles = roles.Select(r => _userRoleLinkFactory.Create(user.Id, r.Id));
+            _userRoleRepository.AddRange(userRoles);
 
-                _userRoleRepository.Add(userRole);
-            }
+            return user;
         }
 
         public User Get(Guid id)
@@ -58,22 +65,18 @@ namespace Auth.Services.PrimitivesServices.UserServices
             return users;
         }
 
-        public void Update(User updatedUser, IEnumerable<Role> roles)
+        public User Update(Guid id, string login, string password, IEnumerable<Role> roles)
         {
+            var updatedUser = _userFactory.Edit(id, login, password);
+
             RemoveUserRoles(updatedUser.Id);
 
             _userRepository.Update(updatedUser);
 
-            foreach (var role in roles)
-            {
-                var userRole = new UserRoleLink()
-                {
-                    Role = role,
-                    User = updatedUser
-                };
+            var userRoles = roles.Select(r => _userRoleLinkFactory.Create(updatedUser.Id, r.Id));
+            _userRoleRepository.AddRange(userRoles);
 
-                _userRoleRepository.Add(userRole);
-            }
+            return updatedUser;
         }
 
         public void RemoveUserRoles(Guid id)

@@ -1,12 +1,11 @@
 ﻿using Auth.Services.AccountServices;
 using Auth.Services.PrimitivesServices.RoleServices;
 using Auth.Services.PrimitivesServices.UserServices;
-using Auth.Web.Forms.Account;
-using Auth.Web.Models.Builders.Persons;
-using Auth.Web.Models.Builders.Users;
+using Auth.Web.Models.ModelBuilders.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace Auth.Web.Controllers
 {
@@ -17,39 +16,19 @@ namespace Auth.Web.Controllers
         private IUserService _userService;
         private IRoleService _roleService;
         private IAccountService _accountService;
-        private IPersonBuilder _personBuilder;
-        private IUserBuilder _userBuilder;
+
+        private IUserModelBuilder _userModelBuilder;
 
         public UsersController(
             IUserService userService,
             IRoleService roleService,
-            IAccountService accountService,
-            IPersonBuilder personBuilder, 
-            IUserBuilder userBuilder)
+            IAccountService accountService, 
+            IUserModelBuilder userModelBuilder)
         {
             _userService = userService;
             _roleService = roleService;
             _accountService = accountService;
-            _personBuilder = personBuilder;
-            _userBuilder = userBuilder;
-        }
-
-        [HttpPost("create")]
-        [Authorize]
-        public IActionResult Create(RegisterUserForm registerUserForm)
-        {
-            if (ModelState.IsValid)
-            {
-                var person = _personBuilder.BuildNew(registerUserForm);
-
-                var user = _userBuilder.BuildNew(person.Id, registerUserForm);
-
-                return Ok();
-            }
-            else
-            {
-                return BadRequest();
-            }
+            _userModelBuilder = userModelBuilder;
         }
 
         [HttpGet("{id}")]
@@ -58,7 +37,9 @@ namespace Auth.Web.Controllers
         {
             var user = _userService.Get(id);
 
-            return Ok(user);
+            var userViewModel = _userModelBuilder.BuildNew(user);
+
+            return Ok(userViewModel);
         }
 
         [HttpGet]
@@ -66,6 +47,8 @@ namespace Auth.Web.Controllers
         public IActionResult List()
         {
             var users = _userService.GetAll();
+
+            var userViewModels = users.Select(u => _userModelBuilder.BuildNew(u));
 
             return Ok(users);
         }

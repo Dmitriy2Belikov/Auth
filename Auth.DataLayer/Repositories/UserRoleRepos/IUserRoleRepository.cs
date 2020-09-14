@@ -1,4 +1,5 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.UserRoleLinks;
 using Auth.DataLayer.Repositories.ModelRepos;
 using System;
 using System.Collections.Generic;

@@ -1,23 +1,52 @@
-﻿using Auth.DataLayer.Models;
+﻿using Auth.DataLayer.Enums;
+using Auth.DataLayer.Models.Persons;
 using Auth.DataLayer.Repositories.PersonRepos;
+using Auth.DataLayer.Repositories.UserRepos;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Auth.Services.PrimitivesServices.PersonServices
 {
-    public class PersonService : IPersonRepository
+    public class PersonService : IPersonService
     {
-        private DataLayer.Repositories.PersonRepos.IPersonRepository _personRepository;
+        private IPersonRepository _personRepository;
+        private IPersonFactory _personFactory;
+        private IUserRepository _userRepository;
 
-        public PersonService(DataLayer.Repositories.PersonRepos.IPersonRepository personRepository)
+        public PersonService(IPersonRepository personRepository, IPersonFactory personFactory, IUserRepository userRepository)
         {
             _personRepository = personRepository;
+            _personFactory = personFactory;
+            _userRepository = userRepository;
         }
 
-        public void Add(Person person)
+        public Person Add(string firstName, 
+            string lastName, 
+            string surName, 
+            Genders gender, 
+            DateTime? birthDate, 
+            string snils,
+            string email, 
+            string phone, 
+            string registrationAddress, 
+            string factAddress, 
+            string otherPhones)
         {
+            var person = _personFactory.Create(firstName, 
+                lastName, 
+                surName, 
+                gender, 
+                birthDate, 
+                snils, 
+                email, 
+                phone, 
+                registrationAddress, 
+                factAddress, 
+                otherPhones);
+
             _personRepository.Add(person);
+
+            return person;
         }
 
         public Person Get(Guid id)
@@ -34,9 +63,26 @@ namespace Auth.Services.PrimitivesServices.PersonServices
             return persons;
         }
 
-        public void Update(Person updatedPerson)
+        public Person Update(Guid userId, 
+            string firstName,
+            string lastName,
+            string surName,
+            Genders gender,
+            DateTime? birthDate,
+            string snils,
+            string email,
+            string phone,
+            string registrationAddress,
+            string factAddress,
+            string otherPhones)
         {
+            var person = _userRepository.GetPerson(userId);
+
+            var updatedPerson = _personFactory.Edit(person.Id, firstName, lastName, surName, gender, birthDate, snils, email, phone, registrationAddress, factAddress, otherPhones);
+
             _personRepository.Update(updatedPerson);
+
+            return updatedPerson;
         }
 
         public void Remove(Guid id)

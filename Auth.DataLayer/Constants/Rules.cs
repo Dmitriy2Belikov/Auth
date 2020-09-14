@@ -1,4 +1,5 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.Rules;
 using System;
 
 namespace Auth.DataLayer.Constants

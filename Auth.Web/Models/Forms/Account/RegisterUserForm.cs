@@ -6,7 +6,6 @@ namespace Auth.Web.Forms.Account
 {
     public class RegisterUserForm
     {
-        public Guid         Id                  { get; set; }
         public string       FirstName           { get; set; }
         public string       LastName            { get; set; }
         public string       SurName             { get; set; }

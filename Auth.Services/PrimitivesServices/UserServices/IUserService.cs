@@ -1,4 +1,6 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.Roles;
+using Auth.DataLayer.Models.Users;
 using System;
 using System.Collections.Generic;
 
@@ -6,11 +8,11 @@ namespace Auth.Services.PrimitivesServices.UserServices
 {
     public interface IUserService
     {
-        void Add(User user, IEnumerable<Role> roles);
+        User Add(Guid personId, string login, string password, IEnumerable<Role> roles);
         User Get(Guid id);
         User Get(string login);
         IEnumerable<User> GetAll();
-        void Update(User updatedUser, IEnumerable<Role> roles);
+        User Update(Guid id, string login, string password, IEnumerable<Role> roles);
         void RemoveUserRoles(Guid id);
         void Remove(Guid id);
         void RemoveRange(IEnumerable<User> users);

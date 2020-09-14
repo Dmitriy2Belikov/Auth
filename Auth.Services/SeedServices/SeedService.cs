@@ -3,6 +3,19 @@ using Auth.DataLayer.ConfigurationModules;
 using Auth.DataLayer.Constants;
 using Auth.DataLayer.Enums;
 using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.OrganizationRequisites;
+using Auth.DataLayer.Models.Organizations;
+using Auth.DataLayer.Models.OrganizationTypes;
+using Auth.DataLayer.Models.Permissions;
+using Auth.DataLayer.Models.Persons;
+using Auth.DataLayer.Models.Roles;
+using Auth.DataLayer.Models.RoleSystemModuleLinks;
+using Auth.DataLayer.Models.Rules;
+using Auth.DataLayer.Models.SystemModules;
+using Auth.DataLayer.Models.UserRoleLinks;
+using Auth.DataLayer.Models.Users;
+using Auth.DataLayer.Models.WorkingEntities;
+using Auth.DataLayer.Models.WorkingEntityOperations;
 using Auth.Services.PrimitivesServices.RoleServices;
 using Auth.Services.PrimitivesServices.UserServices;
 using Microsoft.EntityFrameworkCore;
@@ -51,8 +64,8 @@ namespace Auth.Services.SeedServices
         public void Configure()
         {
             ContextManager.AddOrUpdate(_context, GetDefaultRoles());
-            ContextManager.AddOrUpdate(_context, GetDefaultUsers());
             ContextManager.AddOrUpdate(_context, GetDefaultPersons());
+            ContextManager.AddOrUpdate(_context, GetDefaultUsers());
             ContextManager.AddOrUpdate(_context, GetDefaultUserRoleLinks());
 
             ContextManager.AddOrUpdate(_context, GetDefaultRules());
@@ -92,7 +105,7 @@ namespace Auth.Services.SeedServices
                 {
                     Id = Root.RootUserId,
                     Login = "root",
-                    Password = Helpers.HashPassword("admin")
+                    Password = Helpers.HashPassword("123")
                 }
             };
 
@@ -105,7 +118,7 @@ namespace Auth.Services.SeedServices
             {
                 new Person()
                 {
-                    Id = Guid.Parse("61b2fe7f-f48f-4ab8-b45c-2cdd3da707a7"),
+                    Id = Root.RootUserId,
                     LastName = "Супер",
                     FirstName = "Администратор",
                     SurName = null,

@@ -1,4 +1,7 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.Persons;
+using Auth.DataLayer.Models.Roles;
+using Auth.DataLayer.Models.Users;
 using Auth.DataLayer.Repositories.ModelRepos;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,6 +35,20 @@ namespace Auth.DataLayer.Repositories.UserRepos
                 .Select(r => r.Role);
 
             return roles;
+        }
+
+        public IEnumerable<string> GetAllLogins()
+        {
+            var logins = _context.Users.Select(u => u.Login);
+
+            return logins;
+        }
+
+        public Person GetPerson(Guid id)
+        {
+            var person = _context.Persons.FirstOrDefault(p => p.Id == id);
+
+            return person;
         }
     }
 }

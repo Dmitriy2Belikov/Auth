@@ -1,5 +1,7 @@
 ﻿using Auth.DataLayer;
 using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.RefreshSessions;
+using Auth.DataLayer.Models.Users;
 using Auth.DataLayer.Repositories.RefreshSessionRepos;
 using Auth.Services.CookieServices.CookieServices;
 using Microsoft.IdentityModel.Tokens;
@@ -22,14 +24,12 @@ namespace Auth.Services.AccountServices.TokenAuthenticateServices
             _authorizationCookieManager = authorizationCookieManager;
         }
 
-        public RefreshSession BuildNewRefreshSession(Guid userId, string ip, string userAgent, string refreshToken)
+        public RefreshSession BuildNewRefreshSession(Guid userId, string refreshToken)
         {
             var refreshSession = new RefreshSession()
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
-                IP = ip,
-                UserAgent = userAgent,
                 RefreshToken = refreshToken,
                 ExpiresIn = new DateTime(DateTime.Now.Year, DateTime.Now.Month + 2, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second),
                 CreatedAt = DateTime.Now
@@ -62,7 +62,7 @@ namespace Auth.Services.AccountServices.TokenAuthenticateServices
             return token;
         }
 
-        public void RemoveOldRefreshSession(Guid id)
+        public void RemoveRefreshSession(Guid id)
         {
             _refreshSessionRepository.Remove(id);
         }

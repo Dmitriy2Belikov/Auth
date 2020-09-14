@@ -31,6 +31,8 @@ namespace Auth.Web
 
             services.AddRepositories();
 
+            services.AddFactories();
+
             services.AddServices();
 
             services.AddBuilders();

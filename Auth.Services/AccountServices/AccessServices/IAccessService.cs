@@ -1,4 +1,5 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.Permissions;
 using System;
 using System.Collections.Generic;
 using System.Text;

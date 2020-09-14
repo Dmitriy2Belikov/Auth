@@ -1,10 +1,9 @@
-﻿using Auth.DataLayer.Models;
+﻿using Auth.DataLayer.Models.Permissions;
 using Auth.Services.AccountServices.AccessServices;
 using Auth.Services.AccountServices.TokenAuthenticateServices;
 using Auth.Services.PrimitivesServices.RoleServices;
-using Auth.Web.Builders.Roles;
 using Auth.Web.Forms.Role;
-using Auth.Web.Models.Builders.Permissions;
+using Auth.Web.Models.ModelBuilders.Roles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,38 +16,37 @@ namespace Auth.Web.Controllers
     public class RolesController : ControllerBase
     {
         private IRoleService _roleService;
-        private IRoleBuilder _roleBuilder;
-        private IPermissionBuilder _permissionBuilder;
         private IAccessService _accessService;
         private ITokenService _tokenService;
 
+        private IRoleModelBuilder _roleModelBuilder;
+        private IPermissionFactory _permissionFactory;
+
         public RolesController(
             IRoleService roleService,
-            IRoleBuilder roleBuilder,
-            IPermissionBuilder permissionBuilder,
             IAccessService accessService,
-            ITokenService tokenService)
+            ITokenService tokenService, 
+            IRoleModelBuilder roleModelBuilder, 
+            IPermissionFactory permissionFactory)
         {
             _roleService = roleService;
-            _roleBuilder = roleBuilder;
-            _permissionBuilder = permissionBuilder;
             _accessService = accessService;
             _tokenService = tokenService;
+            _roleModelBuilder = roleModelBuilder;
+            _permissionFactory = permissionFactory;
         }
 
         [HttpPost("create")]
-        [Authorize]
+        //[Authorize]
         public IActionResult Create(RegisterRoleForm registerRoleForm)
         {
             if (ModelState.IsValid)
             {
-                var role = _roleBuilder.BuildNew(registerRoleForm);
+                var role = _roleService.Add(registerRoleForm.Name, registerRoleForm.SystemModuleIds);
 
-                var permissions = registerRoleForm.Permissions.Select(r => _permissionBuilder.BuildNew(role, r));
+                var permissions = registerRoleForm.Permissions.Select(p => _roleService.AddPermission(role.Id, p.WorkingEntityOperationId, p.RuleId));
 
-                _roleService.Add(role, registerRoleForm.SystemModuleIds, permissions);
-
-                var roleViewModel = _roleBuilder.BuildViewModel(role);
+                var roleViewModel = _roleModelBuilder.BuildNew(role);
 
                 return Ok(roleViewModel);
             }
@@ -62,7 +60,9 @@ namespace Auth.Web.Controllers
         [Authorize]
         public IActionResult Get(Guid id)
         {
-            var roleViewModel = _roleBuilder.BuildViewModel(id);
+            var role = _roleService.Get(id);
+
+            var roleViewModel = _roleModelBuilder.BuildNew(role);
 
             return Ok(roleViewModel);
         }
@@ -73,7 +73,7 @@ namespace Auth.Web.Controllers
         {
             var roles = _roleService.GetAll();
 
-            var roleViewModels = roles.Select(r => _roleBuilder.BuildViewModel(r));
+            var roleViewModels = roles.Select(r => _roleModelBuilder.BuildNew(r));
 
             return Ok(roleViewModels);
         }
@@ -84,13 +84,11 @@ namespace Auth.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var role = _roleBuilder.Edit(id, editRoleForm);
+                var role = _roleService.Update(id, editRoleForm.Name, editRoleForm.SystemModuleIds);
 
-                var permissions = editRoleForm.Permissions.Select(p => _permissionBuilder.BuildNew(role, p));
+                var permissions = editRoleForm.Permissions.Select(p => _roleService.AddPermission(role.Id, p.WorkingEntityOperationId, p.RuleId));
 
-                _roleService.Update(role, editRoleForm.SystemModuleIds, permissions);
-
-                var roleViewModel = _roleBuilder.BuildViewModel(role);
+                var roleViewModel = _roleModelBuilder.BuildNew(role);
 
                 return Ok(roleViewModel);
             }
@@ -106,7 +104,7 @@ namespace Auth.Web.Controllers
         {
             _roleService.Remove(id);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

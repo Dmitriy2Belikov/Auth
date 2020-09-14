@@ -9,7 +9,7 @@ namespace Auth.Web.Models.ViewModels.Pemissions
 {
     public class PermissionViewModel
     {
-        public WorkingEntityOperationViewModel Operation { get; set; }
+        public WorkingEntityOperationViewModel WorkingEntityOperation { get; set; }
         public RuleViewModel Rule { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.RefreshSessions;
 using Auth.DataLayer.Repositories.ModelRepos;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace Auth.DataLayer.Repositories.RefreshSessionRepos
 {
     public interface IRefreshSessionRepository : IModelRepository<RefreshSession>
     {
-        RefreshSession Get(Guid userId, string IP, string userAgent);
+        RefreshSession GetByUserId(Guid userId);
         RefreshSession GetByToken(string token);
     }
 }

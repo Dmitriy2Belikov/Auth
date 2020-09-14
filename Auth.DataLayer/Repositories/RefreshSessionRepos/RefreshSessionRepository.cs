@@ -1,4 +1,5 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.RefreshSessions;
 using Auth.DataLayer.Repositories.ModelRepos;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,9 @@ namespace Auth.DataLayer.Repositories.RefreshSessionRepos
             _context = context;
         }
 
-        public RefreshSession Get(Guid userId, string IP, string userAgent)
+        public RefreshSession GetByUserId(Guid userId)
         {
-            var refreshSession = _context.RefreshSessions.FirstOrDefault(r => r.UserId == userId && r.IP == IP && r.UserAgent == userAgent);
+            var refreshSession = _context.RefreshSessions.FirstOrDefault(r => r.UserId == userId);
 
             return refreshSession;
         }

@@ -1,21 +1,16 @@
 ﻿using Auth.DataLayer;
-using Auth.DataLayer.Models;
-using Auth.Services;
 using Auth.Services.AccountServices;
-using Auth.Services.AccountServices.BrowserDataModel;
 using Auth.Services.AccountServices.TokenAuthenticateServices;
+using Auth.Services.AccountServices.ValidateServices;
 using Auth.Services.CookieServices.CookieServices;
+using Auth.Services.PrimitivesServices.PersonServices;
 using Auth.Services.PrimitivesServices.RoleServices;
 using Auth.Services.PrimitivesServices.UserServices;
 using Auth.Web.Forms.Account;
-using Auth.Web.Models.Builders.Persons;
-using Auth.Web.Models.Builders.Users;
+using Auth.Web.Models.ModelBuilders.Users;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 
@@ -30,8 +25,10 @@ namespace Auth.Web.Controllers
         private IAccountService _accountService;
         private ITokenService _tokenService;
         private ICookieService _cookieService;
-        private IUserBuilder _userBuilder;
-        private IPersonBuilder _personBuilder;
+        private IPersonService _personService;
+        private IValidateService _validateService;
+
+        private IUserModelBuilder _userModelBuilder;
 
         public AccountController(
             IUserService userService,
@@ -39,19 +36,22 @@ namespace Auth.Web.Controllers
             IAccountService accountService,
             ITokenService tokenService,
             ICookieService cookieService,
-            IUserBuilder userBuilder,
-            IPersonBuilder personBuilder)
+            IUserModelBuilder userModelBuilder,
+            IPersonService personService, 
+            IValidateService validateService)
         {
             _userService = userService;
             _roleService = roleService;
             _accountService = accountService;
             _tokenService = tokenService;
             _cookieService = cookieService;
-            _userBuilder = userBuilder;
-            _personBuilder = personBuilder;
+            _userModelBuilder = userModelBuilder;
+            _personService = personService;
+            _validateService = validateService;
         }
 
         [HttpGet("refresh_token")]
+        [Authorize]
         public IActionResult GetNewTokens(Guid id, string ip, string userAgent)
         {
             var user = _userService.Get(id);
@@ -64,28 +64,16 @@ namespace Auth.Web.Controllers
             {
                 var identity = _accountService.GetIdentity(user);
 
-                var accessToken = _tokenService.BuildNewAccessToken(identity);               
-                var refreshToken = _tokenService.BuildNewRefreshToken();
+                var tokens = _accountService.GetNewTokenPair(user, identity, token);
 
                 _cookieService.RemoveCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE);
-                _cookieService.SetCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE, refreshToken);
+                _cookieService.SetCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE, tokens.RefreshToken);
 
-                var oldRefreshSession = _tokenService.GetRefreshSession(token);
-                _tokenService.RemoveOldRefreshSession(oldRefreshSession.Id);
-
-                var newRefreshSession = _tokenService.BuildNewRefreshSession(user.Id, ip, userAgent, refreshToken);
-                _tokenService.AddRefreshSession(newRefreshSession);
-
-                var json = new
-                {
-                    token = accessToken
-                };
-
-                return Ok(json);
+                return Ok(tokens.AccessToken);
             }
             else
             {
-                return Conflict();
+                return Forbid();
             }
         }
 
@@ -102,29 +90,12 @@ namespace Auth.Web.Controllers
 
                     if (identity != null)
                     {
-                        var browserData = new BrowserData()
-                        {
-                            IP = "f",
-                            UserAgent = loginViewModel.UserAgent
-                        };
-
-                        var tokens = _accountService.Login(loginViewModel.Login, loginViewModel.Password, browserData);
+                        var tokens = _accountService.Login(user, identity);
 
                         _cookieService.RemoveCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE);
                         _cookieService.SetCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE, tokens.RefreshToken);
 
-                        var identityRoles = identity.Claims
-                            .Where(c => c.Type == ClaimTypes.Role)
-                            .Select(c => c.Value);
-
-                        var response = new
-                        {
-                            access_token = tokens.AccessToken,
-                            username = identity.Name,
-                            roles = identityRoles
-                        };
-
-                        return Ok(response);
+                        return Ok(tokens.AccessToken);
                     }
                 }
 
@@ -132,7 +103,7 @@ namespace Auth.Web.Controllers
             }
             else
             {
-                return BadRequest("Заполните форму правильно");
+                return BadRequest("Заполните форму");
             }
         }
 
@@ -144,7 +115,7 @@ namespace Auth.Web.Controllers
 
             if (refreshSession != null)
             {
-                _tokenService.RemoveOldRefreshSession(refreshSession.Id);
+                _tokenService.RemoveRefreshSession(refreshSession.Id);
             }
 
             _cookieService.RemoveCookie(HttpContext, AuthOptions.REFRESH_TOKEN_COOKIE);
@@ -153,25 +124,45 @@ namespace Auth.Web.Controllers
         }
 
         [HttpPost("register")]
+        [Authorize]
         public IActionResult Register(RegisterUserForm registerViewModel)
         {
             if(ModelState.IsValid)
             {
-                var person = _personBuilder.BuildNew(registerViewModel);
+                if (!_validateService.IsExistLogin(registerViewModel.Login))
+                {
+                    var roles = registerViewModel.RoleIds.Select(r => _roleService.Get(r));
 
-                var newUser = _userBuilder.BuildNew(person.Id, registerViewModel);
+                    var registeredUser = _accountService.Register(
+                        registerViewModel.Login,
+                        registerViewModel.Password,
+                        registerViewModel.FirstName,
+                        registerViewModel.LastName,
+                        registerViewModel.SurName,
+                        registerViewModel.Gender,
+                        registerViewModel.BirthDate,
+                        registerViewModel.Snils,
+                        registerViewModel.Email,
+                        registerViewModel.Phone,
+                        registerViewModel.RegistrationAddress,
+                        registerViewModel.FactAddress,
+                        registerViewModel.OtherPhones,
+                        roles);
 
-                var roles = registerViewModel.RoleIds.Select(r => _roleService.Get(r));
+                    var url = Url.Link("UserResource", new { id = registeredUser.Id });
 
-                var user = _accountService.Register(newUser, person, roles);
+                    var userViewModel = _userModelBuilder.BuildNew(registeredUser);
 
-                var url = Url.Link("UserResource", user);
-
-                return Created(url, user);
+                    return Created(url, userViewModel);
+                }
+                else
+                {
+                    return BadRequest("Логин занят");
+                }
             }
             else
             {
-                return BadRequest("Заполните форму правильно");
+                return BadRequest("Заполните форму");
             }
         }
 
@@ -181,7 +172,9 @@ namespace Auth.Web.Controllers
         {
             var user = _userService.Get(id);
 
-            return Ok(user);
+            var userViewModel = _userModelBuilder.BuildNew(user);
+
+            return Ok(userViewModel);
         }
 
         [HttpPut("{id}")]
@@ -190,16 +183,27 @@ namespace Auth.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _userService.Get(id);
-
                 var roles = editUserViewModel.RoleIds.Select(r => _roleService.Get(r));
 
-                user.Login = editUserViewModel.Email;
-                user.Password = editUserViewModel.Password;
+                var user = _accountService.EditProfile(id,
+                    editUserViewModel.Login,
+                    editUserViewModel.Password,
+                    roles, 
+                    editUserViewModel.FirstName,
+                    editUserViewModel.LastName,
+                    editUserViewModel.SurName,
+                    editUserViewModel.Gender,
+                    editUserViewModel.BirthDate,
+                    editUserViewModel.Snils,
+                    editUserViewModel.Email,
+                    editUserViewModel.Phone,
+                    editUserViewModel.RegistrationAddress,
+                    editUserViewModel.FactAddress,
+                    editUserViewModel.OtherPhones);
 
-                _userService.Update(user, roles);
+                var userViewModel = _userModelBuilder.BuildNew(user);
 
-                return Ok(user);
+                return Ok(userViewModel);
             }
             else
             {
@@ -218,7 +222,9 @@ namespace Auth.Web.Controllers
 
                 if (isVerified)
                 {
-                    return Ok(user);
+                    var userViewModel = _userModelBuilder.BuildNew(user);
+
+                    return Ok(userViewModel);
                 }
                 else
                 {
@@ -235,9 +241,9 @@ namespace Auth.Web.Controllers
         [Authorize]
         public IActionResult DeleteProfile(Guid id)
         {
-            _userService.Remove(id);
+            _accountService.RemoveProfile(id);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

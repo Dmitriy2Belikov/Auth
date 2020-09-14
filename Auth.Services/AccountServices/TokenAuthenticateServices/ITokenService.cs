@@ -1,4 +1,6 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.RefreshSessions;
+using Auth.DataLayer.Models.Users;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -8,10 +10,10 @@ namespace Auth.Services.AccountServices.TokenAuthenticateServices
 {
     public interface ITokenService
     {
-        RefreshSession BuildNewRefreshSession(Guid userId, string ip, string userAgent, string refreshToken);
+        RefreshSession BuildNewRefreshSession(Guid userId, string refreshToken);
         string BuildNewAccessToken(ClaimsIdentity identity);
         string BuildNewRefreshToken();
-        void RemoveOldRefreshSession(Guid id);
+        void RemoveRefreshSession(Guid id);
         RefreshSession GetRefreshSession(string token);
         void AddRefreshSession(RefreshSession session);
         bool VerifyRefreshToken(User user, string token);

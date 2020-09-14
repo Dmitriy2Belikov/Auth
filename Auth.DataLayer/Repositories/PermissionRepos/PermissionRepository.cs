@@ -1,4 +1,5 @@
 ﻿using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.Permissions;
 using Auth.DataLayer.Repositories.ModelRepos;
 using Microsoft.EntityFrameworkCore;
 using System;

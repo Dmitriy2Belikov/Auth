@@ -1,4 +1,18 @@
-﻿using Auth.DataLayer.Models;
+﻿using Auth.DataLayer.Models.OrganizationDistrictLinks;
+using Auth.DataLayer.Models.OrganizationRequisites;
+using Auth.DataLayer.Models.Organizations;
+using Auth.DataLayer.Models.OrganizationTypes;
+using Auth.DataLayer.Models.Permissions;
+using Auth.DataLayer.Models.Persons;
+using Auth.DataLayer.Models.RefreshSessions;
+using Auth.DataLayer.Models.Roles;
+using Auth.DataLayer.Models.RoleSystemModuleLinks;
+using Auth.DataLayer.Models.Rules;
+using Auth.DataLayer.Models.SystemModules;
+using Auth.DataLayer.Models.UserRoleLinks;
+using Auth.DataLayer.Models.Users;
+using Auth.DataLayer.Models.WorkingEntities;
+using Auth.DataLayer.Models.WorkingEntityOperations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Auth.DataLayer

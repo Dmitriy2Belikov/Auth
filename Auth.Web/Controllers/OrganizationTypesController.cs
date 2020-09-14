@@ -1,9 +1,10 @@
 ﻿using Auth.Services.PrimitivesServices.OrganizationTypeServices;
-using Auth.Web.Builders.OrganizationTypes;
 using Auth.Web.Forms.OrganizationType;
+using Auth.Web.Models.ModelBuilders.OrganizationTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace Auth.Web.Controllers
 {
@@ -12,14 +13,14 @@ namespace Auth.Web.Controllers
     public class OrganizationTypesController : ControllerBase
     {
         private IOrganizationTypeService _organizationTypeService;
-        private IOrganizationTypeBuilder _organizationTypeBuilder;
+        private IOrganizationTypeModelBuilder _organizationTypeModelBuilder;
 
         public OrganizationTypesController(
             IOrganizationTypeService organizationTypeService,
-            IOrganizationTypeBuilder organizationTypeBuilder)
+            IOrganizationTypeModelBuilder organizationModelBuilder)
         {
             _organizationTypeService = organizationTypeService;
-            _organizationTypeBuilder = organizationTypeBuilder;
+            _organizationTypeModelBuilder = organizationModelBuilder;
         }
 
         [HttpPost("create")]
@@ -28,11 +29,12 @@ namespace Auth.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var organizationType = _organizationTypeBuilder.BuildNew(registerOrganizationTypeForm);
 
-                var added = _organizationTypeService.Add(organizationType);
+                var organizationType = _organizationTypeService.Add(registerOrganizationTypeForm.Title);
 
-                return Ok(added);
+                var organizationTypeViewModel = _organizationTypeModelBuilder.BuildNew(organizationType);
+
+                return Ok(organizationTypeViewModel);
             }
             else
             {
@@ -48,7 +50,9 @@ namespace Auth.Web.Controllers
             {
                 var organizationType = _organizationTypeService.Get(id);
 
-                return Ok(organizationType);
+                var organizationTypeViewModel = _organizationTypeModelBuilder.BuildNew(organizationType);
+
+                return Ok(organizationTypeViewModel);
             }
             else
             {
@@ -62,7 +66,9 @@ namespace Auth.Web.Controllers
         {
             var organizationTypes = _organizationTypeService.GetAll();
 
-            return Ok(organizationTypes);
+            var organizationTypeViewModels = organizationTypes.Select(o => _organizationTypeModelBuilder.BuildNew(o));
+
+            return Ok(organizationTypeViewModels);
         }
 
         [HttpPut("{id}")]
@@ -73,11 +79,11 @@ namespace Auth.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var organizationType = _organizationTypeBuilder.Edit(id, editOrganizationTypeForm);
+                    var organizationType = _organizationTypeService.Update(id, editOrganizationTypeForm.Title);
 
-                    var updated = _organizationTypeService.Update(organizationType);
+                    var organizationTypeViewModel = _organizationTypeModelBuilder.BuildNew(organizationType);
 
-                    return Ok(updated);
+                    return Ok(organizationTypeViewModel);
                 }
                 else
                 {
@@ -96,7 +102,7 @@ namespace Auth.Web.Controllers
         {
             _organizationTypeService.Remove(id);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

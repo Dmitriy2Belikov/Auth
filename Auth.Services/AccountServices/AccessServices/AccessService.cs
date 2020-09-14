@@ -1,5 +1,6 @@
 ﻿using Auth.DataLayer.Constants;
 using Auth.DataLayer.Models;
+using Auth.DataLayer.Models.Permissions;
 using Auth.DataLayer.Repositories.PermissionRepos;
 using Auth.DataLayer.Repositories.UserRepos;
 using Auth.DataLayer.Repositories.UserRoleRepos;

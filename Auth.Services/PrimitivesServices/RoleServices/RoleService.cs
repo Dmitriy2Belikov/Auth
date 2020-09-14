@@ -6,6 +6,10 @@ using Auth.DataLayer.Repositories.UserRoleRepos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Auth.DataLayer.Models.Roles;
+using Auth.DataLayer.Models.RoleSystemModuleLinks;
+using Auth.DataLayer.Models.Permissions;
+using Auth.DataLayer.Models.SystemModules;
 
 namespace Auth.Services.PrimitivesServices.RoleServices
 {
@@ -13,29 +17,39 @@ namespace Auth.Services.PrimitivesServices.RoleServices
     {
         private IRoleRepository _roleRepository;
         private IUserRoleRepository _userRoleRepository;
-
         private IRoleSystemModuleLinkRepository _roleSystemModuleLinkRepository;
         private IPermissionRepository _permissionRepository;
 
+        private IRoleFactory _roleFactory;
+        private IPermissionFactory _permissionFactory;
+
         public RoleService(
-            IRoleRepository roleRepository, 
-            IUserRoleRepository userRoleRepository, 
-            IRoleSystemModuleLinkRepository roleModuleLinkRepository, 
-            IPermissionRepository permissionRepository)
+            IRoleRepository roleRepository,
+            IUserRoleRepository userRoleRepository,
+            IRoleSystemModuleLinkRepository roleModuleLinkRepository,
+            IPermissionRepository permissionRepository,
+            IRoleSystemModuleLinkRepository roleSystemModuleLinkRepository,
+            IRoleFactory roleFactory, 
+            IPermissionFactory permissionFactory)
         {
             _roleRepository = roleRepository;
             _userRoleRepository = userRoleRepository;
             _roleSystemModuleLinkRepository = roleModuleLinkRepository;
             _permissionRepository = permissionRepository;
+            _roleSystemModuleLinkRepository = roleSystemModuleLinkRepository;
+            _roleFactory = roleFactory;
+            _permissionFactory = permissionFactory;
         }
 
-        public void Add(Role role, IEnumerable<Guid> systemModuleIds, IEnumerable<Permission> permissions)
+        public Role Add(string name, IEnumerable<Guid> systemModuleIds)
         {
+            var role = _roleFactory.Create(name);
+
             _roleRepository.Add(role);
 
             AssignSystemModules(role.Id, systemModuleIds);
 
-            _permissionRepository.AddRange(permissions);
+            return role;
         }
 
         private void AssignSystemModules(Guid roleId, IEnumerable<Guid> systemModuleIds)
@@ -73,17 +87,20 @@ namespace Auth.Services.PrimitivesServices.RoleServices
             return roles;
         }
 
-        public void Update(Role updatedRole, IEnumerable<Guid> updatedSystemModuleIds, IEnumerable<Permission> updatedPermissions)
+        public Role Update(Guid id, string name, IEnumerable<Guid> updatedSystemModuleIds)
         {
-            var oldPermissions = _permissionRepository.GetAllPermissionsByRoleId(updatedRole.Id);
+            var updatedRole = _roleFactory.Edit(id, name);
+
+            var oldPermissions = _permissionRepository.GetAllPermissionsByRoleId(id);
             _permissionRepository.RemoveRange(oldPermissions);
-            _permissionRepository.UpdateRange(updatedPermissions);
 
             var oldSystemModuleLinks = _roleSystemModuleLinkRepository.GetAllByRoleId(updatedRole.Id);
             _roleSystemModuleLinkRepository.RemoveRange(oldSystemModuleLinks);
             AssignSystemModules(updatedRole.Id, updatedSystemModuleIds);
 
             _roleRepository.Update(updatedRole);
+
+            return updatedRole;
         }
 
         public void Remove(Guid id)
@@ -126,6 +143,15 @@ namespace Auth.Services.PrimitivesServices.RoleServices
             var permissions = _permissionRepository.GetAllPermissionsByRoleId(id);
 
             return permissions;
+        }
+
+        public Permission AddPermission(Guid roleId, Guid workingEntityOperationId, Guid ruleId)
+        {
+            var permission = _permissionFactory.Create(roleId, workingEntityOperationId, ruleId);
+
+            _permissionRepository.Add(permission);
+
+            return permission;
         }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using Auth.Services.PrimitivesServices.OrganizationServices;
-using Auth.Web.Builders.OrganizationRequisites;
-using Auth.Web.Builders.Organizations;
-using Auth.Web.Builders.Roles;
 using Auth.Web.Forms.Organization;
+using Auth.Web.Models.ModelBuilders.Organizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace Auth.Web.Controllers
 {
@@ -14,17 +13,15 @@ namespace Auth.Web.Controllers
     public class OrganizationsController : ControllerBase
     {
         private IOrganizationService _organizationService;
-        private IOrganizationBuilder _organizationBuilder;
-        private IOrganizationRequisitesBuilder _organizationRequisitesBuilder;      
+
+        private IOrganizationModelBuilder _organizationModelBuilder;
 
         public OrganizationsController(
-            IOrganizationService organizationService,
-            IOrganizationBuilder organizationBuilder, 
-            IOrganizationRequisitesBuilder organizationRequisitesBuilder)
+            IOrganizationService organizationService, 
+            IOrganizationModelBuilder organizationModelBuilder)
         {
             _organizationService = organizationService;
-            _organizationBuilder = organizationBuilder;
-            _organizationRequisitesBuilder = organizationRequisitesBuilder;
+            _organizationModelBuilder = organizationModelBuilder;
         }
 
         [HttpPost("create")]
@@ -33,15 +30,33 @@ namespace Auth.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var organization = _organizationBuilder.BuildNew(registerOrganizationForm);
+                var organization = _organizationService.Add(
+                    registerOrganizationForm.Title,
+                    registerOrganizationForm.TitleShort,
+                    registerOrganizationForm.ParentOrganizationId,
+                    registerOrganizationForm.OrganizationTypeId,
+                    registerOrganizationForm.LegalAddress,
+                    registerOrganizationForm.PostAddress,
+                    registerOrganizationForm.Phone,
+                    registerOrganizationForm.Fax,
+                    registerOrganizationForm.Email,
+                    registerOrganizationForm.Inn,
+                    registerOrganizationForm.Kpp,
+                    registerOrganizationForm.Ogrn,
+                    registerOrganizationForm.Okved,
+                    registerOrganizationForm.Okpo,
+                    registerOrganizationForm.Okato,
+                    registerOrganizationForm.AccountNumber,
+                    registerOrganizationForm.BankTitle,
+                    registerOrganizationForm.Bik,
+                    registerOrganizationForm.BankCorrespAccount
+                    );
 
-                var organizationRequisite = _organizationRequisitesBuilder.BuildNew(organization.Id, registerOrganizationForm.RequisitesForm);
+                var uri = Url.Link("OrganizationResource", new { id = organization.Id });
 
-                var added = _organizationService.Add(organization, organizationRequisite);
+                var organizationViewModel = _organizationModelBuilder.BuildNew(organization);
 
-                var uri = Url.Link("OrganizationResource", new { id = added.Id });
-
-                return Created(uri, added);
+                return Created(uri, organizationViewModel);
             }
             else
             {
@@ -57,7 +72,9 @@ namespace Auth.Web.Controllers
             {
                 var organization = _organizationService.Get(id);
 
-                return Ok(organization);
+                var organizationViewModel = _organizationModelBuilder.BuildNew(organization);
+
+                return Ok(organizationViewModel);
             }
             else
             {
@@ -71,7 +88,9 @@ namespace Auth.Web.Controllers
         {
             var organizations = _organizationService.GetAll();
 
-            return Ok(organizations);
+            var organizationViewModels = organizations.Select(o => _organizationModelBuilder.BuildNew(o));
+
+            return Ok(organizationViewModels);
         }
 
         [HttpPut("{id}")]
@@ -82,11 +101,31 @@ namespace Auth.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var organization = _organizationBuilder.Edit(id, editOrganizationForm);
+                    var organization = _organizationService.Update(
+                        id,
+                        editOrganizationForm.Title,
+                        editOrganizationForm.TitleShort,
+                        editOrganizationForm.ParentOrganizationId,
+                        editOrganizationForm.OrganizationTypeId,
+                        editOrganizationForm.LegalAddress,
+                        editOrganizationForm.PostAddress,
+                        editOrganizationForm.Phone,
+                        editOrganizationForm.Fax,
+                        editOrganizationForm.Email,
+                        editOrganizationForm.Inn,
+                        editOrganizationForm.Kpp,
+                        editOrganizationForm.Ogrn,
+                        editOrganizationForm.Okved,
+                        editOrganizationForm.Okpo,
+                        editOrganizationForm.Okato,
+                        editOrganizationForm.AccountNumber,
+                        editOrganizationForm.BankTitle,
+                        editOrganizationForm.Bik,
+                        editOrganizationForm.BankCorrespAccount);
 
-                    var updated = _organizationService.Update(organization);
+                    var organizationViewModel = _organizationModelBuilder.BuildNew(organization);
 
-                    return Ok(updated);
+                    return Ok(organizationViewModel);
                 }
                 else
                 {
@@ -107,7 +146,7 @@ namespace Auth.Web.Controllers
             {
                 _organizationService.Remove(id);
 
-                return Ok();
+                return NoContent();
             }
             else
             {

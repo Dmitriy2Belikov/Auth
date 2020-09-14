@@ -19,32 +19,7 @@ namespace Auth.DataLayer.Migrations
                 .HasAnnotation("ProductVersion", "3.1.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("Auth.DataLayer.Models.Organization", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OrganizationTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ParentOrganizationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TitleShort")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationTypeId");
-
-                    b.ToTable("Organizations");
-                });
-
-            modelBuilder.Entity("Auth.DataLayer.Models.OrganizationDistrictLink", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.OrganizationDistrictLinks.OrganizationDistrictLink", b =>
                 {
                     b.Property<Guid>("OrganizationId")
                         .HasColumnType("uuid");
@@ -57,7 +32,7 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("OrganizationDistrictLinks");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.OrganizationRequisite", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.OrganizationRequisites.OrganizationRequisite", b =>
                 {
                     b.Property<Guid>("OrganizationId")
                         .ValueGeneratedOnAdd()
@@ -126,7 +101,7 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("OrganizationRequisites");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.OrganizationType", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.OrganizationTypes.OrganizationType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -140,7 +115,32 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("OrganizationTypes");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.Permission", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.Organizations.Organization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrganizationTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ParentOrganizationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TitleShort")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationTypeId");
+
+                    b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("Auth.DataLayer.Models.Permissions.Permission", b =>
                 {
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid");
@@ -160,7 +160,7 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("Permissions");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.Person", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.Persons.Person", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -204,7 +204,7 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("Persons");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.RefreshSession", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.RefreshSessions.RefreshSession", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -216,14 +216,7 @@ namespace Auth.DataLayer.Migrations
                     b.Property<DateTime>("ExpiresIn")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("IP")
-                        .HasColumnType("character varying(15)")
-                        .HasMaxLength(15);
-
                     b.Property<string>("RefreshToken")
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserAgent")
                         .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
@@ -234,21 +227,7 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("RefreshSessions");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.Role", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("Auth.DataLayer.Models.RoleSystemModuleLink", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.RoleSystemModuleLinks.RoleSystemModuleLink", b =>
                 {
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid");
@@ -263,7 +242,21 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("RoleSystemModuleLinks");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.Rule", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.Roles.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("Auth.DataLayer.Models.Rules.Rule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -277,7 +270,7 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("Rules");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.SystemModule", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.SystemModules.SystemModule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -291,30 +284,7 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("SystemModules");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("LastActionTime")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Login")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Auth.DataLayer.Models.UserRoleLink", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.UserRoleLinks.UserRoleLink", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -329,7 +299,26 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("UserRoleLinks");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.WorkingEntity", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.Users.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("LastActionTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Login")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Auth.DataLayer.Models.WorkingEntities.WorkingEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -343,7 +332,7 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("WorkingEntities");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.WorkingEntityOperation", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.WorkingEntityOperations.WorkingEntityOperation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -367,84 +356,93 @@ namespace Auth.DataLayer.Migrations
                     b.ToTable("WorkingEntityOperations");
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.Organization", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.OrganizationDistrictLinks.OrganizationDistrictLink", b =>
                 {
-                    b.HasOne("Auth.DataLayer.Models.OrganizationType", "OrganizationType")
-                        .WithMany()
-                        .HasForeignKey("OrganizationTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Auth.DataLayer.Models.OrganizationDistrictLink", b =>
-                {
-                    b.HasOne("Auth.DataLayer.Models.Organization", "Organization")
+                    b.HasOne("Auth.DataLayer.Models.Organizations.Organization", "Organization")
                         .WithMany()
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.Permission", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.Organizations.Organization", b =>
                 {
-                    b.HasOne("Auth.DataLayer.Models.Role", "Role")
+                    b.HasOne("Auth.DataLayer.Models.OrganizationTypes.OrganizationType", "OrganizationType")
+                        .WithMany()
+                        .HasForeignKey("OrganizationTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Auth.DataLayer.Models.Permissions.Permission", b =>
+                {
+                    b.HasOne("Auth.DataLayer.Models.Roles.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Auth.DataLayer.Models.Rule", "Rule")
+                    b.HasOne("Auth.DataLayer.Models.Rules.Rule", "Rule")
                         .WithMany()
                         .HasForeignKey("RuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Auth.DataLayer.Models.WorkingEntityOperation", "WorkingEntityOperation")
+                    b.HasOne("Auth.DataLayer.Models.WorkingEntityOperations.WorkingEntityOperation", "WorkingEntityOperation")
                         .WithMany()
                         .HasForeignKey("WorkingEntityOperationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.RoleSystemModuleLink", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.RoleSystemModuleLinks.RoleSystemModuleLink", b =>
                 {
-                    b.HasOne("Auth.DataLayer.Models.Role", "Role")
+                    b.HasOne("Auth.DataLayer.Models.Roles.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Auth.DataLayer.Models.SystemModule", "SystemModule")
+                    b.HasOne("Auth.DataLayer.Models.SystemModules.SystemModule", "SystemModule")
                         .WithMany()
                         .HasForeignKey("SystemModuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.UserRoleLink", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.UserRoleLinks.UserRoleLink", b =>
                 {
-                    b.HasOne("Auth.DataLayer.Models.Role", "Role")
+                    b.HasOne("Auth.DataLayer.Models.Roles.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Auth.DataLayer.Models.User", "User")
+                    b.HasOne("Auth.DataLayer.Models.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Auth.DataLayer.Models.WorkingEntityOperation", b =>
+            modelBuilder.Entity("Auth.DataLayer.Models.Users.User", b =>
                 {
-                    b.HasOne("Auth.DataLayer.Models.SystemModule", "SystemModule")
+                    b.HasOne("Auth.DataLayer.Models.Persons.Person", "Person")
+                        .WithOne("User")
+                        .HasForeignKey("Auth.DataLayer.Models.Users.User", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Auth.DataLayer.Models.WorkingEntityOperations.WorkingEntityOperation", b =>
+                {
+                    b.HasOne("Auth.DataLayer.Models.SystemModules.SystemModule", "SystemModule")
                         .WithMany()
                         .HasForeignKey("SystemModuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Auth.DataLayer.Models.WorkingEntity", "WorkingEntity")
+                    b.HasOne("Auth.DataLayer.Models.WorkingEntities.WorkingEntity", "WorkingEntity")
                         .WithMany()
                         .HasForeignKey("WorkingEntityId")
                         .OnDelete(DeleteBehavior.Cascade)

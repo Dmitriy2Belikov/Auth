@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "0GrQ6HAeKRBSk4Gy4a6C4niqOB9Fev2CX3MsiLbvYV4600banVvlaqdxcn7/jLtYRdP56wD4FBjMLwnEPLGMHw==",
+  "dgSpecHash": "2dJeb92oI6D587KVWsu2z+mOecX4M/3yubLw5gY9vYV74NaYtMc7lKh6qxso94idysSwFxjtJwJsvFuPpUatrw==",
   "success": true,
   "projectFilePath": "C:\\Users\\user\\Desktop\\Auth\\Auth.DataLayer\\Auth.DataLayer.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\user\\.nuget\\packages\\bcrypt.net-next\\4.0.0\\bcrypt.net-next.4.0.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.bcl.hashcode\\1.1.0\\microsoft.bcl.hashcode.1.1.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
